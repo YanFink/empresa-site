@@ -1,0 +1,598 @@
+#!/usr/bin/env node
+/**
+ * Gerador estático do site (sem dependências além das fontes).
+ * Lê site.config.js + content/*.js e escreve a pasta dist/.
+ *   npm run build
+ */
+const fs = require("fs");
+const path = require("path");
+const cfg = require("./site.config.js");
+
+const ROOT = __dirname;
+const DIST = path.join(ROOT, "dist");
+
+/* ---------- utilidades ---------- */
+const esc = (s) =>
+  String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const jsonEsc = (s) => JSON.stringify(String(s)).slice(1, -1);
+const kebab = (s) => s.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+function loadContent(lang) {
+  const file = require.resolve(`./content/${lang}.js`);
+  delete require.cache[file];
+  let raw = JSON.stringify(require(file));
+  raw = raw
+    .replace(/\{brand\}/g, jsonEsc(cfg.brand.name))
+    .replace(/\{legalName\}/g, jsonEsc(cfg.brand.legalName))
+    .replace(/\{email\}/g, jsonEsc(cfg.contact.email));
+  return JSON.parse(raw);
+}
+
+function write(rel, data) {
+  const f = path.join(DIST, rel);
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, data);
+}
+
+function copyDir(src, dst) {
+  fs.mkdirSync(dst, { recursive: true });
+  for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+    const s = path.join(src, e.name);
+    const d = path.join(dst, e.name);
+    if (e.isDirectory()) copyDir(s, d);
+    else fs.copyFileSync(s, d);
+  }
+}
+
+/* ---------- ícones ---------- */
+const I = (body, extra = "") =>
+  `<svg class="ico" ${extra} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
+const ICONS = {
+  system: I('<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8M12 18v3"/><path d="M7 13h3M13 13h4"/>'),
+  site: I('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>'),
+  game: I('<rect x="2.5" y="7" width="19" height="11" rx="4"/><path d="M7 10.5v4M5 12.5h4M15.5 11.5h.01M18 13.5h.01"/>'),
+  tailor: I('<path d="M4 20l4-1 11-11a2.1 2.1 0 0 0-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/>'),
+  shield: I('<path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5L15.5 10"/>'),
+  lock: I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3M12 15v2"/>'),
+  chat: I('<path d="M4 5h16v11H9l-5 4V5z"/><path d="M8 9.5h8M8 12.5h5"/>'),
+  toggle: I('<rect x="2.5" y="7" width="19" height="10" rx="5"/><circle cx="16.5" cy="12" r="2.6"/>'),
+  server: I('<rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01M12 7h5M12 17h5"/>'),
+  arrow: I('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+  mail: I('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/>'),
+  check: I('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  globe: I('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/>'),
+  wa: `<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.5A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.9.9-3-.2-.3a8.1 8.1 0 0 1 7-12.4zM8.7 7.6c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.7 1.2 2.9c.1.2 2 3.2 5 4.4 2.5 1 3 .8 3.5.7.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.7-.4l-2-1c-.3-.1-.5-.1-.7.1l-.9 1.1c-.2.2-.3.2-.6.1-.3-.2-1.2-.4-2.3-1.4-.8-.8-1.4-1.700-1.5-2-.2-.3 0-.4.1-.6l.5-.5.3-.5c.1-.2 0-.4 0-.5l-.9-2.200c-.2-.5-.4-.5-.6-.5z"/></svg>`,
+};
+
+/* ---------- logo tipográfica provisória ---------- */
+function logo(t) {
+  if (cfg.brand.logoFile) {
+    return `<img class="logo-img" src="ASSETS/${esc(cfg.brand.logoFile)}" alt="${esc(cfg.brand.name)}" height="28">`;
+  }
+  return `<span class="logo-word">${esc(cfg.brand.name.toUpperCase())}</span><span class="logo-dot" aria-hidden="true"></span>`;
+}
+
+/* ---------- mockups (HTML/CSS puro, dados fictícios) ---------- */
+function frame(label, title, inner, cls) {
+  return `<div class="mock ${cls}" role="img" aria-label="${esc(label)}">
+    <div class="mock-bar" aria-hidden="true"><i></i><i></i><i></i><span>${esc(title)}</span></div>
+    <div class="mock-body" aria-hidden="true">${inner}</div>
+  </div>`;
+}
+
+function mockSalon(t, label) {
+  const m = t.projects.mock.salon;
+  const cols = [
+    [[6, 24, 1, 0, 0], [36, 20, 2, 1, 1], [62, 26, 3, 2, 2]],
+    [[10, 18, 2, 3, 3], [34, 30, 1, 1, 4], [70, 20, 3, 4, 5]],
+    [[4, 22, 3, 2, 1], [30, 18, 1, 0, 2], [52, 28, 2, 5, 0]],
+    [[12, 26, 1, 4, 4], [44, 20, 3, 3, 3], [70, 22, 2, 0, 5]],
+    [[8, 20, 2, 1, 5], [32, 26, 3, 2, 0], [62, 24, 1, 0, 1]],
+  ];
+  let n = 0;
+  const colsHtml = cols
+    .map(
+      (c, ci) =>
+        `<div class="m-col"><div class="m-day">${esc(m.week[ci])}</div><div class="m-track">${c
+          .map(([top, h, col, s, cl]) => {
+            const drag = ci === 2 && s === 0 ? " drag" : "";
+            return `<span class="blk c${col}${drag}" style="--t:${top}%;--h:${h}%;--i:${n++}"><b>${esc(m.services[s])}</b><em>${esc(m.clients[cl])}</em></span>`;
+          })
+          .join("")}</div></div>`
+    )
+    .join("");
+  const inner = `<div class="m-side"><b></b><b class="on"></b><b></b><b></b><b></b></div>
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="m-week">${colsHtml}</div></div>`;
+  return frame(label, m.title, inner, "mock-salon");
+}
+
+function mockAuto(t, label) {
+  const m = t.projects.mock.auto;
+  const cards = [
+    [[0, 1, 18], [1, 3, 8]],
+    [[2, 0, 62], [3, 2, 44]],
+    [[4, 4, 100], [5, 1, 100]],
+  ];
+  let n = 0;
+  const cols = m.cols
+    .map(
+      (name, ci) =>
+        `<div class="k-col"><div class="k-head"><span class="k-dot d${ci}"></span>${esc(name)}</div>${cards[ci]
+          .map(([vn, s, p]) => {
+            const svc = m.services[s % m.services.length];
+            return `<div class="k-card" style="--i:${n++}"><b>${esc(m.vehicle)} ${String(vn + 1).padStart(2, "0")}</b><em>${esc(svc)}</em><span class="k-bar"><i style="--w:${p}%"></i></span></div>`;
+          })
+          .join("")}</div>`
+    )
+    .join("");
+  const inner = `<div class="m-side"><b></b><b></b><b class="on"></b><b></b><b></b></div>
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="k-board">${cols}</div></div>`;
+  return frame(label, m.title, inner, "mock-auto");
+}
+
+function mockPharmacy(t, label) {
+  const m = t.projects.mock.pharmacy;
+  const lots = ["L-0412", "L-0415", "L-0420", "L-0431"];
+  const widths = [86, 22, 64, 48];
+  const rows = m.rows
+    .map(
+      (r, i) =>
+        `<div class="p-row" style="--i:${i}"><span>${esc(r)}</span><span class="p-mono">${lots[i]}</span><span class="p-bar"><i style="--w:${widths[i]}%"></i></span><span class="p-chip${i === 1 ? " warn" : ""}">${esc(m.status[i])}</span></div>`
+    )
+    .join("");
+  const head = m.head.map((h) => `<span>${esc(h)}</span>`).join("");
+  const inner = `<div class="m-side"><b></b><b></b><b></b><b class="on"></b><b></b></div>
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div>
+    <div class="p-table"><div class="p-row p-th">${head}</div>${rows}</div></div>`;
+  return frame(label, m.title, inner, "mock-pharmacy");
+}
+
+function mockCrm(t, label) {
+  const m = t.projects.mock.crm;
+  const widths = [100, 74, 50, 30];
+  const bars = m.stages
+    .map(
+      (s, i) =>
+        `<div class="f-row" style="--i:${i}"><span>${esc(s)}</span><div class="f-track"><i style="--w:${widths[i]}%"></i></div></div>`
+    )
+    .join("");
+  const people = [0, 1, 2]
+    .map((i) => `<div class="f-person" style="--i:${i + 4}"><span class="f-av a${i}"></span><span class="f-lines"><i></i><i></i></span></div>`)
+    .join("");
+  const inner = `<div class="m-side"><b></b><b></b><b></b><b></b><b class="on"></b></div>
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div>
+    <div class="f-wrap"><div class="f-funnel">${bars}</div><div class="f-people">${people}</div></div></div>`;
+  return frame(label, m.title, inner, "mock-crm");
+}
+
+const MOCKS = { salon: mockSalon, auto: mockAuto, pharmacy: mockPharmacy, crm: mockCrm };
+
+function heroUi(t) {
+  const h = t.hero;
+  const bars = [38, 62, 46, 80, 58, 92, 70]
+    .map((v, i) => `<i style="--h:${v}%;--i:${i}"></i>`)
+    .join("");
+  return `<div class="hero-ui" aria-hidden="true">
+    <div class="mock hero-mock">
+      <div class="mock-bar"><i></i><i></i><i></i><span>${esc(cfgName())}</span></div>
+      <div class="hero-body">
+        <div class="hu-side"><b></b><b class="on"></b><b></b><b></b></div>
+        <div class="hu-main">
+          <div class="hu-row">
+            <div class="hu-card hu-a"><span class="hu-k"></span><span class="hu-l"></span><span class="hu-s"></span></div>
+            <div class="hu-card hu-b"><span class="hu-k"></span><span class="hu-l"></span><span class="hu-s"></span></div>
+            <div class="hu-card hu-c"><span class="hu-k"></span><span class="hu-l"></span><span class="hu-s"></span></div>
+          </div>
+          <div class="hu-chart"><div class="hu-bars">${bars}</div><svg class="hu-line" viewBox="0 0 200 60" preserveAspectRatio="none"><path d="M0 46 C25 40 35 18 62 26 S105 52 130 28 S175 6 200 12"/></svg></div>
+          <div class="hu-list"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="float f1">${ICONS.system}<span>${esc(h.floatA)}</span></div>
+    <div class="float f2">${ICONS.toggle}<span>${esc(h.floatB)}</span></div>
+    <div class="float f3">${ICONS.shield}<span>${esc(h.floatC)}</span></div>
+  </div>`;
+}
+const cfgName = () => cfg.brand.name;
+
+/* ---------- partes da página ---------- */
+function head(t, ctx) {
+  const { lang, up, canonical, alt, title, description, jsonld } = ctx;
+  const fontPre = ["space-grotesk-latin-700-normal", "inter-latin-400-normal"]
+    .map((f) => `<link rel="preload" href="${up}assets/fonts/${f}.woff2" as="font" type="font/woff2" crossorigin>`)
+    .join("\n");
+  const alts = alt
+    .map((a) => `<link rel="alternate" hreflang="${a.lang}" href="${a.href}">`)
+    .join("\n")
+    .concat(`\n<link rel="alternate" hreflang="x-default" href="${alt[0].xdefault}">`);
+  return `<!doctype html>
+<html lang="${t.htmlLang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(description)}">
+<meta name="theme-color" content="${cfg.colors.bg}">
+<link rel="canonical" href="${canonical}">
+${alts}
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${esc(cfg.brand.name)}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:url" content="${canonical}">
+<meta property="og:locale" content="${t.ogLocale}">
+<meta name="twitter:card" content="summary">
+<link rel="icon" type="image/svg+xml" href="${up}assets/favicon.svg">
+${fontPre}
+<link rel="stylesheet" href="${up}assets/fonts.css">
+<link rel="stylesheet" href="${up}assets/style.css">
+<style>:root{${Object.entries(cfg.colors)
+    .map(([k, v]) => `--${kebab(k)}:${v}`)
+    .join(";")};--f-display:'${cfg.fonts.display}',system-ui,sans-serif;--f-body:'${cfg.fonts.body}',system-ui,sans-serif}</style>
+<script type="application/ld+json">${JSON.stringify(jsonld)}</script>
+</head>`;
+}
+
+function header(t, ctx) {
+  const { homeHref, anchor, switchHref } = ctx;
+  const links = t.nav.map((n) => `<a href="${anchor(n.id)}">${esc(n.label)}</a>`).join("");
+  return `<a class="skip" href="#main">${esc(t.ui.skip)}</a>
+<header class="site-header" id="top">
+  <div class="wrap bar">
+    <a class="logo" href="${homeHref}" aria-label="${esc(cfg.brand.name)} — ${esc(t.ui.home)}">${logo(t).replace("ASSETS/", ctx.up + "assets/")}</a>
+    <nav class="nav" id="nav" aria-label="Principal">
+      ${links}
+      <a class="btn btn-sm nav-cta" href="${anchor("contato")}">${esc(t.cta)}</a>
+    </nav>
+    <div class="bar-end">
+      <a class="lang" href="${switchHref}" hreflang="${t.lang === "pt" ? "en" : "pt"}" lang="${t.lang === "pt" ? "en" : "pt"}" data-lang-switch="${t.lang === "pt" ? "en" : "pt"}" aria-label="${esc(t.ui.switchLabel)}">${ICONS.globe}<span>${esc(t.ui.switchCode)}</span></a>
+      <button class="burger" type="button" aria-controls="nav" aria-expanded="false" aria-label="${esc(t.ui.menu)}" data-open="${esc(t.ui.menu)}" data-close="${esc(t.ui.menuClose)}"><span></span><span></span></button>
+    </div>
+  </div>
+</header>`;
+}
+
+function sectionHead(eyebrow, title, intro) {
+  return `<div class="sec-head" data-reveal>
+    <p class="eyebrow">${esc(eyebrow)}</p>
+    <h2>${esc(title)}</h2>
+    ${intro ? `<p class="lead">${esc(intro)}</p>` : ""}
+  </div>`;
+}
+
+function hero(t, ctx) {
+  const h = t.hero;
+  return `<section class="hero" aria-labelledby="hero-title">
+  <canvas class="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-glow g1" aria-hidden="true"></div><div class="hero-glow g2" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
+      <h1 id="hero-title" data-reveal style="--d:80ms">${esc(h.title[0])} <span class="grad">${esc(h.title[1])}</span></h1>
+      <p class="hero-sub" data-reveal style="--d:160ms">${esc(h.sub)}</p>
+      <div class="hero-actions" data-reveal style="--d:240ms">
+        <a class="btn" href="${ctx.anchor("contato")}"><span>${esc(t.cta)}</span>${ICONS.arrow}</a>
+        <a class="btn btn-ghost" href="${ctx.anchor("sistemas")}">${esc(h.secondary)}</a>
+      </div>
+      <ul class="chips" data-reveal style="--d:320ms">${h.chips.map((c) => `<li>${ICONS.check}${esc(c)}</li>`).join("")}</ul>
+    </div>
+    <div class="hero-visual" data-reveal style="--d:200ms">${heroUi(t)}</div>
+  </div>
+</section>`;
+}
+
+function what(t) {
+  const w = t.what;
+  const cards = w.cards
+    .map((c, i) => {
+      const inner = `<span class="card-ico">${ICONS[c.icon]}</span>
+        <h3>${esc(c.title)}${c.badge ? ` <span class="badge">${esc(c.badge)}</span>` : ""}</h3>
+        <p>${esc(c.text)}</p>`;
+      return c.href
+        ? `<a class="card card-soft glow" href="${c.href}" data-reveal style="--d:${i * 90}ms">${inner}</a>`
+        : `<article class="card glow" data-reveal style="--d:${i * 90}ms">${inner}</article>`;
+    })
+    .join("");
+  const items = w.niches.map((n) => `<li>${esc(n)}</li>`).join("");
+  return `<section class="sec" id="${w.id}" aria-labelledby="h-what">
+  <div class="wrap">
+    ${sectionHead(w.eyebrow, w.title, w.intro).replace("<h2>", '<h2 id="h-what">')}
+    <div class="grid-3">${cards}</div>
+    <div class="niches" data-reveal>
+      <div class="niches-head"><h3>${esc(w.nichesTitle)}</h3><p>${esc(w.nichesNote)}</p></div>
+      <div class="marquee" aria-label="${esc(w.nichesTitle)}">
+        <ul class="marquee-track">${items}</ul>
+        <ul class="marquee-track" aria-hidden="true">${items}</ul>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+function projects(t) {
+  const p = t.projects;
+  const cards = p.items
+    .map((it, i) => {
+      let title = it.title;
+      if (cfg.showClientNames && cfg.clientNames[it.key]) title = `${it.title} — ${cfg.clientNames[it.key]}`;
+      const label = `${title}. ${t.ui.mockNote}.`;
+      return `<article class="proj" data-reveal>
+        <div class="proj-visual">${MOCKS[it.key](t, label)}<p class="mock-note">${esc(t.ui.mockNote)}</p></div>
+        <div class="proj-copy">
+          <p class="tag">${esc(it.tag)}</p>
+          <h3>${esc(title)}</h3>
+          <p>${esc(it.text)}</p>
+          <p class="mod-title">${esc(p.modulesTitle)}</p>
+          <ul class="mods">${it.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+        </div>
+      </article>`;
+    })
+    .join("");
+  return `<section class="sec sec-alt" id="${p.id}" aria-labelledby="h-proj">
+  <div class="wrap">
+    ${sectionHead(p.eyebrow, p.title, p.intro).replace("<h2>", '<h2 id="h-proj">')}
+    <p class="disclaimer" data-reveal>${ICONS.shield}<span>${esc(p.disclaimer)}</span></p>
+    <div class="proj-list">${cards}</div>
+  </div>
+</section>`;
+}
+
+function deliver(t) {
+  const d = t.deliver;
+  const items = d.items
+    .map(
+      (it, i) => `<article class="card glow" data-reveal style="--d:${(i % 3) * 80}ms">
+      <span class="card-ico">${ICONS[it.icon]}</span><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p></article>`
+    )
+    .join("");
+  const pos = d.positioning;
+  return `<section class="sec" id="${d.id}" aria-labelledby="h-del">
+  <div class="wrap">
+    ${sectionHead(d.eyebrow, d.title).replace("<h2>", '<h2 id="h-del">')}
+    <div class="grid-3">${items}</div>
+    <div class="model" data-reveal>
+      <div class="model-copy"><h3>${esc(d.model.title)}</h3><p>${esc(d.model.text)}</p></div>
+      <div class="position" role="group" aria-label="${esc(d.model.title)}">
+        <div class="pos pos-side"><b>${esc(pos.left)}</b><span>${esc(pos.leftNote)}</span></div>
+        <div class="pos pos-mid"><b>${esc(pos.mid)}</b><span>${esc(pos.midNote)}</span></div>
+        <div class="pos pos-side"><b>${esc(pos.right)}</b><span>${esc(pos.rightNote)}</span></div>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+function process(t) {
+  const p = t.process;
+  const steps = p.steps
+    .map(
+      (s, i) => `<li class="step" data-reveal style="--d:${i * 90}ms"><span class="step-n">${String(i + 1).padStart(2, "0")}</span><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`
+    )
+    .join("");
+  return `<section class="sec sec-alt" id="${p.id}" aria-labelledby="h-proc">
+  <div class="wrap">
+    ${sectionHead(p.eyebrow, p.title).replace("<h2>", '<h2 id="h-proc">')}
+    <ol class="steps">${steps}</ol>
+  </div>
+</section>`;
+}
+
+function games(t) {
+  const g = t.games;
+  const cells = Array.from({ length: 24 }, (_, i) => `<i style="--i:${i}"></i>`).join("");
+  return `<section class="sec" id="${g.id}" aria-labelledby="h-games">
+  <div class="wrap">
+    <div class="games" data-reveal>
+      <div class="games-copy">
+        <p class="eyebrow">${esc(g.eyebrow)}</p>
+        <h2 id="h-games">${esc(g.title)} <span class="badge badge-lg">${esc(g.badge)}</span></h2>
+        <p class="lead">${esc(g.text)}</p>
+      </div>
+      <div class="teaser" role="img" aria-label="${esc(g.teaserAlt)}">
+        <div class="teaser-grid" aria-hidden="true">${cells}</div>
+        <div class="teaser-bar" aria-hidden="true"><i></i></div>
+        <span class="teaser-text" aria-hidden="true">${esc(g.teaser)}</span>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+function contact(t) {
+  const c = t.contact;
+  const wa = `https://wa.me/${cfg.contact.whatsapp}?text=${encodeURIComponent(c.waMessage)}`;
+  const mail = `mailto:${cfg.contact.email}?subject=${encodeURIComponent(c.emailSubject)}`;
+  return `<section class="sec sec-contact" id="${c.id}" aria-labelledby="h-contact">
+  <div class="wrap">
+    <div class="contact" data-reveal>
+      <p class="eyebrow">${esc(c.eyebrow)}</p>
+      <h2 id="h-contact">${esc(c.title)}</h2>
+      <p class="lead">${esc(c.text)}</p>
+      <div class="contact-actions">
+        <a class="btn btn-wa" href="${wa}" target="_blank" rel="noopener">${ICONS.wa}<span>${esc(c.whatsapp)}</span></a>
+        <a class="btn btn-ghost" href="${mail}">${ICONS.mail}<span>${esc(c.email)}</span></a>
+      </div>
+      <p class="contact-note">${esc(c.note)}</p>
+    </div>
+  </div>
+</section>`;
+}
+
+function footer(t, ctx) {
+  return `<footer class="site-footer">
+  <div class="wrap foot">
+    <div class="foot-brand"><a class="logo" href="${ctx.homeHref}" aria-label="${esc(cfg.brand.name)}">${logo(t).replace("ASSETS/", ctx.up + "assets/")}</a>
+      <p>© ${cfg.year} ${esc(cfg.brand.legalName)}. ${esc(t.footer.rights)}</p></div>
+    <div class="foot-links"><a href="${ctx.privacyHref}">${esc(t.footer.privacy)}</a>
+      <a href="${ctx.switchHref}" data-lang-switch="${t.lang === "pt" ? "en" : "pt"}" hreflang="${t.lang === "pt" ? "en" : "pt"}" lang="${t.lang === "pt" ? "en" : "pt"}">${esc(t.ui.switchTo)}</a></div>
+    <p class="foot-note">${esc(t.footer.demoNote)}</p>
+  </div>
+</footer>`;
+}
+
+/* ---------- páginas ---------- */
+function urls(lang, page) {
+  const other = cfg.languages.find((l) => l !== lang);
+  const T = { pt: loadContent("pt"), en: loadContent("en") };
+  const base = cfg.siteUrl.replace(/\/$/, "");
+  const abs = (l, pg) => `${base}/${l}/${pg === "privacy" ? T[l].paths.privacy + "/" : ""}`;
+  return { other, T, abs };
+}
+
+function buildPage(lang, page) {
+  const { other, T, abs } = urls(lang, page);
+  const t = T[lang];
+  const isPriv = page === "privacy";
+  const up = isPriv ? "../../" : "../";
+  const homeHref = isPriv ? "../" : "./";
+  const anchor = (id) => (isPriv ? `../#${id}` : `#${id}`);
+  const switchHref = isPriv ? `../../${other}/${T[other].paths.privacy}/` : `../${other}/`;
+  const privacyHref = isPriv ? "./" : `${t.paths.privacy}/`;
+  const ctx = { up, homeHref, anchor, switchHref, privacyHref };
+
+  const title = isPriv ? t.meta.privacyTitle : t.meta.title;
+  const description = isPriv ? t.meta.privacyDescription : t.meta.description;
+  const canonical = abs(lang, page);
+  const alt = cfg.languages.map((l) => ({
+    lang: l === "pt" ? "pt-BR" : "en",
+    href: abs(l, page),
+    xdefault: abs(cfg.defaultLang, page),
+  }));
+  const jsonld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "Organization", name: cfg.brand.name, url: cfg.siteUrl },
+      { "@type": "WebSite", name: cfg.brand.name, url: cfg.siteUrl, inLanguage: t.htmlLang },
+    ],
+  };
+
+  const body = isPriv
+    ? `<main id="main" class="legal"><div class="wrap narrow">
+        <a class="back" href="../">${ICONS.arrow}<span>${esc(t.ui.backHome)}</span></a>
+        <h1>${esc(t.privacy.title)}</h1>
+        <p class="legal-meta">${esc(t.privacy.updated)}</p>
+        <p class="draft">${esc(t.privacy.draftNote)}</p>
+        ${t.privacy.sections
+          .map((s) => `<section><h2>${esc(s.h)}</h2>${s.p.map((x) => `<p>${esc(x)}</p>`).join("")}</section>`)
+          .join("")}
+      </div></main>`
+    : `<main id="main">${hero(t, ctx)}${what(t)}${projects(t)}${deliver(t)}${process(t)}${games(t)}${contact(t)}</main>`;
+
+  return `${head(t, { lang, up, canonical, alt, title, description, jsonld })}
+<body class="${isPriv ? "page-legal" : "page-home"}">
+${header(t, ctx)}
+${body}
+${footer(t, ctx)}
+<script src="${up}assets/main.js" defer></script>
+</body>
+</html>
+`;
+}
+
+function buildRoot() {
+  const base = cfg.siteUrl.replace(/\/$/, "");
+  const alts = cfg.languages
+    .map((l) => `<link rel="alternate" hreflang="${l === "pt" ? "pt-BR" : "en"}" href="${base}/${l}/">`)
+    .join("\n");
+  return `<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(cfg.brand.name)}</title>
+<meta name="description" content="${esc(loadContent("pt").meta.description)}">
+<meta name="theme-color" content="${cfg.colors.bg}">
+<link rel="canonical" href="${base}/${cfg.defaultLang}/">
+${alts}
+<link rel="alternate" hreflang="x-default" href="${base}/${cfg.defaultLang}/">
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:${cfg.colors.bg};color:${cfg.colors.text};font-family:system-ui,sans-serif}a{color:${cfg.colors.accentStrong};margin:0 12px;font-size:1.1rem}</style>
+<script>
+(function(){
+  var lang='${cfg.defaultLang}';
+  try{
+    var saved=localStorage.getItem('lang');
+    if(saved==='pt'||saved==='en'){lang=saved;}
+    else{
+      var nav=(navigator.languages&&navigator.languages[0])||navigator.language||'';
+      lang=nav.toLowerCase().indexOf('pt')===0?'pt':'en';
+    }
+  }catch(e){}
+  location.replace(lang+'/');
+})();
+</script>
+</head>
+<body>
+<p><a href="pt/">Português</a> · <a href="en/">English</a></p>
+</body>
+</html>
+`;
+}
+
+function buildFavicon() {
+  const ch = esc(cfg.brand.name.trim().charAt(0).toUpperCase());
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="${cfg.colors.bg}"/><rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="${cfg.colors.accent}" stroke-opacity=".5" stroke-width="3"/><text x="32" y="45" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="38" fill="${cfg.colors.accentStrong}">${ch}</text></svg>`;
+}
+
+function buildFontsCss() {
+  const f = (family, file, weight) =>
+    `@font-face{font-family:'${family}';font-style:normal;font-display:swap;font-weight:${weight};src:url(fonts/${file}.woff2) format('woff2')}`;
+  return [
+    f(cfg.fonts.display, "space-grotesk-latin-500-normal", 500),
+    f(cfg.fonts.display, "space-grotesk-latin-700-normal", 700),
+    f(cfg.fonts.body, "inter-latin-400-normal", 400),
+    f(cfg.fonts.body, "inter-latin-500-normal", 500),
+    f(cfg.fonts.body, "inter-latin-600-normal", 600),
+  ].join("\n");
+}
+
+function main() {
+  fs.rmSync(DIST, { recursive: true, force: true });
+  fs.mkdirSync(DIST, { recursive: true });
+
+  copyDir(path.join(ROOT, "assets"), path.join(DIST, "assets"));
+  const fontsDir = path.join(DIST, "assets", "fonts");
+  fs.mkdirSync(fontsDir, { recursive: true });
+  const nm = path.join(ROOT, "node_modules", "@fontsource");
+  const fontFiles = [
+    ["space-grotesk", "space-grotesk-latin-500-normal"],
+    ["space-grotesk", "space-grotesk-latin-700-normal"],
+    ["inter", "inter-latin-400-normal"],
+    ["inter", "inter-latin-500-normal"],
+    ["inter", "inter-latin-600-normal"],
+  ];
+  for (const [pkg, f] of fontFiles) {
+    fs.copyFileSync(path.join(nm, pkg, "files", `${f}.woff2`), path.join(fontsDir, `${f}.woff2`));
+  }
+  write("assets/fonts.css", buildFontsCss());
+  write("assets/favicon.svg", buildFavicon());
+
+  write("index.html", buildRoot());
+  for (const lang of cfg.languages) {
+    const t = loadContent(lang);
+    write(`${lang}/index.html`, buildPage(lang, "home"));
+    write(`${lang}/${t.paths.privacy}/index.html`, buildPage(lang, "privacy"));
+  }
+
+  const base = cfg.siteUrl.replace(/\/$/, "");
+  const T = { pt: loadContent("pt"), en: loadContent("en") };
+  const entry = (pg) => {
+    const loc = (l) => `${base}/${l}/${pg === "privacy" ? T[l].paths.privacy + "/" : ""}`;
+    return cfg.languages
+      .map(
+        (l) =>
+          `  <url><loc>${loc(l)}</loc>${cfg.languages
+            .map((a) => `<xhtml:link rel="alternate" hreflang="${a === "pt" ? "pt-BR" : "en"}" href="${loc(a)}"/>`)
+            .join("")}</url>`
+      )
+      .join("\n");
+  };
+  write(
+    "sitemap.xml",
+    `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entry("home")}\n${entry("privacy")}\n</urlset>\n`
+  );
+  write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`);
+  write(".nojekyll", "");
+  console.log("Site gerado em dist/");
+}
+
+main();

@@ -1,0 +1,290 @@
+module.exports = {
+  lang: "en",
+  htmlLang: "en",
+  ogLocale: "en_US",
+  paths: { privacy: "privacy" },
+  meta: {
+    title: "{brand} — Custom business software and websites",
+    description:
+      "We build custom management systems for any kind of business, plus websites. Monthly license, dedicated hosting and fair pricing. Request a quote.",
+    privacyTitle: "Privacy policy — {brand}",
+    privacyDescription: "How the {brand} website handles personal data, in line with Brazil's LGPD.",
+  },
+  ui: {
+    skip: "Skip to content",
+    menu: "Open menu",
+    menuClose: "Close menu",
+    switchTo: "Português",
+    switchLabel: "Switch to Portuguese",
+    switchCode: "PT",
+    home: "Home page",
+    mockNote: "Demo screen with fictional data",
+    backHome: "Back to the site",
+  },
+  nav: [
+    { id: "o-que-fazemos", label: "What we do" },
+    { id: "sistemas", label: "Systems" },
+    { id: "entregamos", label: "What you get" },
+    { id: "como-trabalhamos", label: "How we work" },
+    { id: "jogos", label: "Games" },
+  ],
+  cta: "Request a quote",
+  hero: {
+    eyebrow: "Custom software",
+    title: ["Software that fits your business,", "not the other way around."],
+    sub: "We build custom management systems and websites for any line of business. More complete than an off-the-shelf tool, without the price of a large agency.",
+    secondary: "See what we build",
+    chips: ["Built to fit", "Dedicated hosting", "Designed for LGPD"],
+    floatA: "Today's schedule",
+    floatB: "Active modules",
+    floatC: "Data protected",
+  },
+  what: {
+    eyebrow: "What we do",
+    id: "o-que-fazemos",
+    title: "If your company needs a system, we build it.",
+    intro:
+      "We don't stick to a single niche. We learn how your business runs and design the system around the way you already work, instead of forcing you into a one-size-fits-all program.",
+    cards: [
+      {
+        icon: "system",
+        title: "Custom management systems",
+        text: "Scheduling, sales, inventory, finance, customers, reports: whatever your business needs, shaped the way that makes sense. Works in the browser, on desktop or mobile.",
+      },
+      {
+        icon: "site",
+        title: "Websites",
+        text: "Company websites and landing pages that are fast, good-looking and easy to find, built with the same care as our systems.",
+      },
+      {
+        icon: "game",
+        title: "Games for Steam",
+        text: "A project we have in mind for the future.",
+        badge: "Coming soon",
+        href: "#jogos",
+      },
+    ],
+    nichesTitle: "A few industries, just as examples",
+    nichesNote: "These are only illustrations. If your industry isn't listed, we work with it too.",
+    niches: [
+      "Beauty and aesthetics",
+      "Auto shops and service centers",
+      "Pharmacies and health",
+      "Retail",
+      "Services",
+      "Education",
+      "Food and beverage",
+      "Logistics",
+    ],
+  },
+  projects: {
+    eyebrow: "Systems we build",
+    id: "sistemas",
+    title: "Examples of our work, not the limit of it.",
+    intro:
+      "These are some of the systems we have developed. They show how we think about product, and any of them can be adapted or turned into something entirely different.",
+    disclaimer:
+      "Demo projects. The screens show fictional data and do not represent clients in production.",
+    modulesTitle: "Modules",
+    items: [
+      {
+        key: "salon",
+        tag: "Beauty and aesthetics",
+        title: "Beauty salon system",
+        text: "From the first booking to the after-visit follow-up, everything in one place. Each feature is a module that can be switched on or off depending on what the salon needs.",
+        features: [
+          "Drag-and-drop scheduling",
+          "Tabs and payments",
+          "Commissions",
+          "Inventory",
+          "Session packages",
+          "Loyalty program",
+          "Technical record with photos",
+          "Online booking",
+          "WhatsApp reminders",
+          "Satisfaction survey",
+          "Two-step verification",
+          "LGPD",
+        ],
+      },
+      {
+        key: "auto",
+        tag: "Auto shops and service centers",
+        title: "Auto service center system",
+        text: "Keeps the shop's workflow organized from vehicle check-in to delivery, with work orders, customers, vehicles and parts in one place.",
+        features: ["Work orders", "Customers and vehicles", "Estimates", "Parts inventory", "Finance"],
+      },
+      {
+        key: "pharmacy",
+        tag: "Pharmacies and health",
+        title: "Compounding pharmacy system",
+        text: "Formulas, ingredients and batches, prescriptions, orders and payments, with special attention to security and data traceability.",
+        features: ["Formulas and products", "Batch-based inventory", "Customers and prescriptions", "Orders and payments", "Access control"],
+      },
+      {
+        key: "crm",
+        tag: "Any industry",
+        title: "Generic CRM",
+        text: "A starting point to track contacts, opportunities and sales conversations, which can be shaped around each company's sales process.",
+        features: ["Contacts and companies", "Opportunity pipeline", "Interaction history", "Tasks and reminders"],
+      },
+    ],
+    mock: {
+      salon: {
+        week: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        title: "Schedule",
+        clients: ["Client A", "Client B", "Client C", "Client D", "Client E", "Client F"],
+        services: ["Haircut", "Coloring", "Blow-dry", "Manicure", "Treatment", "Beard"],
+      },
+      auto: {
+        title: "Work orders",
+        cols: ["Waiting", "In service", "Ready"],
+        vehicle: "Vehicle",
+        services: ["Inspection", "Brakes", "Alignment", "Oil change", "Suspension"],
+      },
+      pharmacy: {
+        title: "Inventory and batches",
+        head: ["Item", "Batch", "Stock", "Status"],
+        rows: ["Ingredient 01", "Ingredient 02", "Ingredient 03", "Ingredient 04"],
+        status: ["OK", "Low", "OK", "OK"],
+      },
+      crm: {
+        title: "Opportunity pipeline",
+        stages: ["New", "Contacted", "Proposal", "Won"],
+      },
+    },
+  },
+  deliver: {
+    eyebrow: "What you get",
+    id: "entregamos",
+    title: "A complete system, with care in the details.",
+    items: [
+      {
+        icon: "tailor",
+        title: "Built to fit",
+        text: "Features and screens designed around your process, without bloat you never use and without missing what you need.",
+      },
+      {
+        icon: "shield",
+        title: "Security",
+        text: "Role-based access control and two-step verification, according to what each project calls for.",
+      },
+      {
+        icon: "lock",
+        title: "LGPD",
+        text: "Systems designed to handle personal data responsibly, with features that support your obligations under the law.",
+      },
+      {
+        icon: "chat",
+        title: "WhatsApp",
+        text: "Reminders and communication with your customers on the channel they already use, in projects where it makes sense.",
+      },
+      {
+        icon: "toggle",
+        title: "Modules you can switch on and off",
+        text: "Turn on only what you need today and add the rest as your business grows.",
+      },
+      {
+        icon: "server",
+        title: "Dedicated hosting",
+        text: "Every client gets their own server. Your system is not shared with other companies.",
+      },
+    ],
+    model: {
+      title: "How engagement works",
+      text: "You pay a monthly usage license, which includes dedicated hosting for your system. No surprises: the quote comes after we understand what your business needs.",
+    },
+    positioning: {
+      left: "Off-the-shelf software",
+      leftNote: "Low price, but few features and little adaptation.",
+      mid: "Custom, fairly priced",
+      midNote: "Complete and built around your process.",
+      right: "Large agency",
+      rightNote: "Highly customized, but priced at enterprise level.",
+    },
+  },
+  process: {
+    eyebrow: "How we work",
+    id: "como-trabalhamos",
+    title: "From first contact to support, in five steps.",
+    steps: [
+      { title: "Conversation", text: "We listen to how your business runs today and what is holding it back." },
+      { title: "Proposal", text: "We lay out what will be built and the terms, clearly." },
+      { title: "Prototype", text: "You see and validate the screens before the system takes its final shape." },
+      { title: "Delivery", text: "We put the system live on your dedicated server." },
+      { title: "Support", text: "We stay by your side, adjusting and evolving the system." },
+    ],
+  },
+  games: {
+    eyebrow: "Games",
+    id: "jogos",
+    badge: "Coming soon",
+    title: "We're going to make games, too.",
+    text: "We are getting ready to create PC games and release them on Steam. It is still early: there is no title and no date, and we would rather tell you more once there is something real to show.",
+    teaser: "Loading…",
+    teaserAlt: "Abstract illustration of a game screen in preparation, with animated blocks",
+  },
+  contact: {
+    eyebrow: "Contact",
+    id: "contato",
+    title: "Shall we talk about your system?",
+    text: "Tell us what your business needs. We'll reply with a proposal made to fit.",
+    whatsapp: "Message on WhatsApp",
+    email: "Send an email",
+    waMessage: "Hello! I'd like to request a quote.",
+    emailSubject: "Quote request",
+    note: "Pricing is set case by case, after we understand your project.",
+  },
+  footer: {
+    privacy: "Privacy (LGPD)",
+    rights: "All rights reserved.",
+    demoNote: "The projects shown are demos with fictional data.",
+  },
+  privacy: {
+    title: "Privacy policy",
+    updated: "Last updated: October 2026",
+    draftNote:
+      "Provisional base text. Have a lawyer review it and complete the controller details before publishing it as final.",
+    sections: [
+      {
+        h: "Who we are",
+        p: [
+          "This website is operated by {legalName} (the “controller”). For questions about personal data, write to {email}.",
+        ],
+      },
+      {
+        h: "What data we process",
+        p: [
+          "The site has no forms, requires no sign-up and uses no analytics or advertising tools. We do not collect personal data through browsing.",
+          "We store only your language preference, locally in your browser, so the site opens in the language you chose. That information is not sent to us.",
+        ],
+      },
+      {
+        h: "When you contact us",
+        p: [
+          "If you write to us on WhatsApp or by email, we will process the information you send (such as your name, phone number and a description of what you need) only to answer your request and prepare a proposal. These messages also pass through the platforms you choose to use, which have their own privacy policies.",
+        ],
+      },
+      {
+        h: "Legal basis and retention",
+        p: [
+          "We process this data to respond to a request from you and to take preliminary steps toward a possible contract (LGPD, art. 7, V), and we keep it for as long as needed for that purpose or to comply with legal obligations.",
+        ],
+      },
+      {
+        h: "Sharing",
+        p: ["We do not sell personal data. We may share it only with providers who help us serve you, under a duty of confidentiality, or when required by law."],
+      },
+      {
+        h: "Your rights",
+        p: [
+          "Under the LGPD, you may request confirmation of processing, access, correction, anonymization, portability, deletion of your data and information about sharing, and withdraw consent where applicable. Just write to {email}.",
+        ],
+      },
+      {
+        h: "Changes",
+        p: ["We may update this policy. The date of the last update is always shown at the top of the page."],
+      },
+    ],
+  },
+};
