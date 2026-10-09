@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "node build.js",
-    "start": "node build.js && npx --yes http-server dist -p 4173 -c-1"
+    "start": "node build.js && npx --yes http-server docs -p 4173 -c-1"
   },
   "keywords": [],
   "author": "",
