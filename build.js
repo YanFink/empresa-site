@@ -9,13 +9,20 @@ const path = require("path");
 const cfg = require("./site.config.js");
 
 const ROOT = __dirname;
-const DIST = path.join(ROOT, "dist");
+const DIST = path.join(ROOT, "docs"); // "docs" porque o GitHub Pages publica a partir dessa pasta
 
 /* ---------- utilidades ---------- */
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const jsonEsc = (s) => JSON.stringify(String(s)).slice(1, -1);
 const kebab = (s) => s.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+function contactLabel() {
+  if (cfg.contact.email) return cfg.contact.email;
+  const d = String(cfg.contact.whatsapp).replace(/\D/g, "");
+  const m = d.match(/^(\d{2})(\d{2})(\d{5})(\d{4})$/);
+  return m ? `+${m[1]} (${m[2]}) ${m[3]}-${m[4]}` : d;
+}
 
 function loadContent(lang) {
   const file = require.resolve(`./content/${lang}.js`);
@@ -24,7 +31,7 @@ function loadContent(lang) {
   raw = raw
     .replace(/\{brand\}/g, jsonEsc(cfg.brand.name))
     .replace(/\{legalName\}/g, jsonEsc(cfg.brand.legalName))
-    .replace(/\{email\}/g, jsonEsc(cfg.contact.email));
+    .replace(/\{email\}/g, jsonEsc(contactLabel()));
   return JSON.parse(raw);
 }
 
@@ -82,86 +89,93 @@ function frame(label, title, inner, cls) {
 
 function mockSalon(t, label) {
   const m = t.projects.mock.salon;
+  const hours = ["09:00", "11:00", "13:00", "15:00"];
+  // [top%, height%, cor(1-3), serviço, cliente]
   const cols = [
-    [[6, 24, 1, 0, 0], [36, 20, 2, 1, 1], [62, 26, 3, 2, 2]],
-    [[10, 18, 2, 3, 3], [34, 30, 1, 1, 4], [70, 20, 3, 4, 5]],
-    [[4, 22, 3, 2, 1], [30, 18, 1, 0, 2], [52, 28, 2, 5, 0]],
-    [[12, 26, 1, 4, 4], [44, 20, 3, 3, 3], [70, 22, 2, 0, 5]],
-    [[8, 20, 2, 1, 5], [32, 26, 3, 2, 0], [62, 24, 1, 0, 1]],
+    [[6, 20, 1, 0, 0], [52, 24, 3, 4, 1]],
+    [[30, 22, 2, 1, 2], [62, 26, 1, 2, 3]],
+    [[14, 30, 3, 3, 4], [58, 20, 2, 5, 5]],
   ];
   let n = 0;
   const colsHtml = cols
     .map(
       (c, ci) =>
-        `<div class="m-col"><div class="m-day">${esc(m.week[ci])}</div><div class="m-track">${c
+        `<div class="m-col"><div class="m-day"><span class="av a${ci}"></span>${esc(m.pros[ci])}</div><div class="m-track">${c
           .map(([top, h, col, s, cl]) => {
-            const drag = ci === 2 && s === 0 ? " drag" : "";
+            const drag = ci === 1 && s === 1 ? " drag" : "";
             return `<span class="blk c${col}${drag}" style="--t:${top}%;--h:${h}%;--i:${n++}"><b>${esc(m.services[s])}</b><em>${esc(m.clients[cl])}</em></span>`;
           })
           .join("")}</div></div>`
     )
     .join("");
+  const gutter = `<div class="m-hours" aria-hidden="true">${hours.map((h) => `<span>${h}</span>`).join("")}</div>`;
   const inner = `<div class="m-side"><b></b><b class="on"></b><b></b><b></b><b></b></div>
-    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="m-week">${colsHtml}</div></div>`;
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="m-cal">${gutter}<div class="m-week">${colsHtml}</div></div></div>`;
   return frame(label, m.title, inner, "mock-salon");
 }
 
 function mockAuto(t, label) {
   const m = t.projects.mock.auto;
-  const cards = [
-    [[0, 1, 18], [1, 3, 8]],
-    [[2, 0, 62], [3, 2, 44]],
-    [[4, 4, 100], [5, 1, 100]],
-  ];
-  let n = 0;
-  const cols = m.cols
+  const tiles = m.kpis
+    .map((k, i) => `<div class="a-tile" style="--i:${i}"><span>${esc(k)}</span><i></i></div>`)
+    .join("");
+  const plates = ["ABC-1D23", "FGH-4I56", "JKL-7M89"];
+  const counts = [3, 1, 2, 3, 9];
+  const rows = m.stages
     .map(
-      (name, ci) =>
-        `<div class="k-col"><div class="k-head"><span class="k-dot d${ci}"></span>${esc(name)}</div>${cards[ci]
-          .map(([vn, s, p]) => {
-            const svc = m.services[s % m.services.length];
-            return `<div class="k-card" style="--i:${n++}"><b>${esc(m.vehicle)} ${String(vn + 1).padStart(2, "0")}</b><em>${esc(svc)}</em><span class="k-bar"><i style="--w:${p}%"></i></span></div>`;
-          })
-          .join("")}</div>`
+      (s, i) =>
+        `<div class="a-row" style="--i:${i + 3}"><span class="a-chip s${i}">${esc(s)}</span><span class="a-bar"><i style="--w:${20 + counts[i] * 8}%"></i></span><b>${counts[i]}</b></div>`
     )
     .join("");
+  const ready = plates.map((p, i) => `<span class="a-plate" style="--i:${i + 8}">${p}</span>`).join("");
   const inner = `<div class="m-side"><b></b><b></b><b class="on"></b><b></b><b></b></div>
-    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="k-board">${cols}</div></div>`;
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div>
+    <div class="a-tiles">${tiles}</div>
+    <div class="a-grid"><div class="a-stages">${rows}</div><div class="a-ready">${ready}</div></div></div>`;
   return frame(label, m.title, inner, "mock-auto");
 }
 
 function mockPharmacy(t, label) {
   const m = t.projects.mock.pharmacy;
-  const lots = ["L-0412", "L-0415", "L-0420", "L-0431"];
-  const widths = [86, 22, 64, 48];
+  const lots = ["L-0412", "L-0415", "L-0420"];
+  const widths = [86, 22, 64];
+  const tiles = m.kpis
+    .map((k, i) => `<div class="a-tile" style="--i:${i}"><span>${esc(k)}</span><i></i></div>`)
+    .join("");
   const rows = m.rows
+    .slice(0, 3)
     .map(
       (r, i) =>
-        `<div class="p-row" style="--i:${i}"><span>${esc(r)}</span><span class="p-mono">${lots[i]}</span><span class="p-bar"><i style="--w:${widths[i]}%"></i></span><span class="p-chip${i === 1 ? " warn" : ""}">${esc(m.status[i])}</span></div>`
+        `<div class="p-row" style="--i:${i + 3}"><span>${esc(r)}</span><span class="p-mono">${lots[i]}</span><span class="p-bar"><i style="--w:${widths[i]}%"></i></span><span class="p-chip${i === 1 ? " warn" : ""}">${esc(m.status[i])}</span></div>`
     )
     .join("");
   const head = m.head.map((h) => `<span>${esc(h)}</span>`).join("");
   const inner = `<div class="m-side"><b></b><b></b><b></b><b class="on"></b><b></b></div>
     <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div>
+    <div class="a-tiles t3">${tiles}</div>
     <div class="p-table"><div class="p-row p-th">${head}</div>${rows}</div></div>`;
   return frame(label, m.title, inner, "mock-pharmacy");
 }
 
 function mockCrm(t, label) {
   const m = t.projects.mock.crm;
-  const widths = [100, 74, 50, 30];
-  const bars = m.stages
+  const layout = [
+    [[0, 62], [1, 38], [2, 80]],
+    [[3, 54], [4, 90]],
+    [[5, 40]],
+  ];
+  let n = 0;
+  const cols = m.stages
+    .slice(0, 3)
     .map(
-      (s, i) =>
-        `<div class="f-row" style="--i:${i}"><span>${esc(s)}</span><div class="f-track"><i style="--w:${widths[i]}%"></i></div></div>`
+      (name, ci) =>
+        `<div class="k-col"><div class="k-head"><span class="k-dot d${ci}"></span>${esc(name)}</div>${layout[ci]
+          .map(([av, w]) => `<div class="k-card c${ci}" style="--i:${n++}"><span class="k-lines"><i style="width:${w}%"></i><i></i></span><span class="k-foot"><em class="k-pill"></em><span class="f-av a${av % 3}"></span></span></div>`)
+          .join("")}</div>`
     )
     .join("");
-  const people = [0, 1, 2]
-    .map((i) => `<div class="f-person" style="--i:${i + 4}"><span class="f-av a${i}"></span><span class="f-lines"><i></i><i></i></span></div>`)
-    .join("");
-  const inner = `<div class="m-side"><b></b><b></b><b></b><b></b><b class="on"></b></div>
-    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div>
-    <div class="f-wrap"><div class="f-funnel">${bars}</div><div class="f-people">${people}</div></div></div>`;
+  const inner = `<div class="m-side"><b></b><b class="on"></b><b></b><b></b><b></b></div>
+    <div class="m-main"><div class="m-head"><strong>${esc(m.title)}</strong><span class="m-pill"></span></div><div class="k-board">${cols}</div></div>`;
   return frame(label, m.title, inner, "mock-crm");
 }
 
@@ -319,7 +333,7 @@ function projects(t) {
       return `<article class="proj" data-reveal>
         <div class="proj-visual">${MOCKS[it.key](t, label)}<p class="mock-note">${esc(t.ui.mockNote)}</p></div>
         <div class="proj-copy">
-          <p class="tag">${esc(it.tag)}</p>
+          <p class="tag">${esc(it.tag)}${cfg.inProduction && cfg.inProduction[it.key] ? ` <span class="badge badge-live">${esc(p.liveBadge)}</span>` : ""}</p>
           <h3>${esc(title)}</h3>
           <p>${esc(it.text)}</p>
           <p class="mod-title">${esc(p.modulesTitle)}</p>
@@ -333,6 +347,10 @@ function projects(t) {
     ${sectionHead(p.eyebrow, p.title, p.intro).replace("<h2>", '<h2 id="h-proj">')}
     <p class="disclaimer" data-reveal>${ICONS.shield}<span>${esc(p.disclaimer)}</span></p>
     <div class="proj-list">${cards}</div>
+    <div class="proj-more" data-reveal>
+      <div><h3>${esc(p.more.title)}</h3><p>${esc(p.more.text)}</p></div>
+      <a class="btn" href="#contato"><span>${esc(t.cta)}</span>${ICONS.arrow}</a>
+    </div>
   </div>
 </section>`;
 }
@@ -410,7 +428,7 @@ function contact(t) {
       <p class="lead">${esc(c.text)}</p>
       <div class="contact-actions">
         <a class="btn btn-wa" href="${wa}" target="_blank" rel="noopener">${ICONS.wa}<span>${esc(c.whatsapp)}</span></a>
-        <a class="btn btn-ghost" href="${mail}">${ICONS.mail}<span>${esc(c.email)}</span></a>
+        ${cfg.contact.email ? `<a class="btn btn-ghost" href="${mail}">${ICONS.mail}<span>${esc(c.email)}</span></a>` : ""}
       </div>
       <p class="contact-note">${esc(c.note)}</p>
     </div>
@@ -592,7 +610,7 @@ function main() {
   );
   write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`);
   write(".nojekyll", "");
-  console.log("Site gerado em dist/");
+  console.log("Site gerado em docs/");
 }
 
 main();

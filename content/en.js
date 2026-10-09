@@ -83,8 +83,12 @@ module.exports = {
     title: "Examples of our work, not the limit of it.",
     intro:
       "These are some of the systems we have developed. They show how we think about product, and any of them can be adapted or turned into something entirely different.",
-    disclaimer:
-      "Demo projects. The screens show fictional data and do not represent clients in production.",
+    disclaimer: "The screens show fictional data, created for demonstration only.",
+    liveBadge: "In production",
+    more: {
+      title: "Don't see your industry?",
+      text: "The list above is just a sample. Tell us what your business needs and we'll build the system.",
+    },
     modulesTitle: "Modules",
     items: [
       {
@@ -131,26 +135,26 @@ module.exports = {
     ],
     mock: {
       salon: {
-        week: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+        pros: ["Stylist A", "Stylist B", "Stylist C"],
         title: "Schedule",
         clients: ["Client A", "Client B", "Client C", "Client D", "Client E", "Client F"],
         services: ["Haircut", "Coloring", "Blow-dry", "Manicure", "Treatment", "Beard"],
       },
       auto: {
         title: "Work orders",
-        cols: ["Waiting", "In service", "Ready"],
-        vehicle: "Vehicle",
-        services: ["Inspection", "Brakes", "Alignment", "Oil change", "Suspension"],
+        kpis: ["Open orders", "Late", "Ready for pickup"],
+        stages: ["Estimate", "Approved", "In progress", "Ready", "Delivered"],
       },
       pharmacy: {
         title: "Inventory and batches",
+        kpis: ["Orders this month", "Batches expiring", "Low stock"],
         head: ["Item", "Batch", "Stock", "Status"],
         rows: ["Ingredient 01", "Ingredient 02", "Ingredient 03", "Ingredient 04"],
         status: ["OK", "Low", "OK", "OK"],
       },
       crm: {
         title: "Opportunity pipeline",
-        stages: ["New", "Contacted", "Proposal", "Won"],
+        stages: ["New lead", "In conversation", "Proposal sent", "Negotiation"],
       },
     },
   },
@@ -238,7 +242,7 @@ module.exports = {
   footer: {
     privacy: "Privacy (LGPD)",
     rights: "All rights reserved.",
-    demoNote: "The projects shown are demos with fictional data.",
+    demoNote: "The screens shown use fictional data.",
   },
   privacy: {
     title: "Privacy policy",

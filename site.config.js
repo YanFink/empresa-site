@@ -17,18 +17,18 @@ module.exports = {
     logoFile: null,
   },
 
-  // URL final do site, sem barra no fim. Se for GitHub Pages sem domínio próprio,
-  // use https://SEU-USUARIO.github.io/empresa-site
-  siteUrl: "https://example.com",
+  // URL final do site, sem barra no fim. Enquanto não houver domínio próprio, usa o
+  // endereço gratuito do GitHub Pages. Quando comprar o domínio, troque aqui.
+  siteUrl: "https://yanfink.github.io/empresa-site",
 
   languages: ["pt", "en"],
   defaultLang: "pt",
 
   contact: {
-    // WhatsApp só com números, com DDI+DDD. TROQUE pelo número real.
-    whatsapp: "5511900000000",
-    // TROQUE pelo e-mail real.
-    email: "contato@example.com",
+    // WhatsApp só com números, com DDI+DDD. Número provisório de teste.
+    whatsapp: "5511991223575",
+    // Deixe "" para esconder o botão de e-mail (enquanto não houver e-mail profissional).
+    email: "",
   },
 
   // Nomes de clientes reais NÃO aparecem no site por padrão.
@@ -37,6 +37,15 @@ module.exports = {
   clientNames: {
     auto: "Megatrom",
     pharmacy: "Privilégio Fórmulas",
+  },
+
+  // Selo "Em produção" nos projetos. Deixe false até o sistema estar de fato no ar
+  // com um cliente que autorizou. Mude para true só nos que forem verdade.
+  inProduction: {
+    salon: false,
+    auto: false,
+    pharmacy: false,
+    crm: false,
   },
 
   // Paleta provisória: grafite profundo + acento teal.

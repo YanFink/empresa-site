@@ -6,7 +6,7 @@ const path = require("path");
 let chromium;
 const puppeteer = require("puppeteer-core");
 
-const DIST = path.join(__dirname, "..", "dist");
+const DIST = path.join(__dirname, "..", "docs");
 const OUT = path.join(__dirname, "..", "screenshots");
 const MIME = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".xml": "application/xml", ".txt": "text/plain" };
 

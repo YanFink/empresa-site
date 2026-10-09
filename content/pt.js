@@ -83,8 +83,12 @@ module.exports = {
     title: "Exemplos do nosso trabalho, não o limite dele.",
     intro:
       "Estes são alguns sistemas que desenvolvemos. Servem para você ver como pensamos produto, e qualquer um deles pode ser adaptado ou virar algo completamente diferente.",
-    disclaimer:
-      "Projetos de demonstração. As telas mostram dados fictícios e não representam clientes em produção.",
+    disclaimer: "As telas mostram dados fictícios, criados apenas para demonstração.",
+    liveBadge: "Em produção",
+    more: {
+      title: "Não viu o seu ramo?",
+      text: "A lista acima é só uma amostra. Conte o que o seu negócio precisa e a gente constrói o sistema.",
+    },
     modulesTitle: "Módulos",
     items: [
       {
@@ -131,26 +135,26 @@ module.exports = {
     ],
     mock: {
       salon: {
-        week: ["Seg", "Ter", "Qua", "Qui", "Sex"],
+        pros: ["Profissional A", "Profissional B", "Profissional C"],
         title: "Agenda",
         clients: ["Cliente A", "Cliente B", "Cliente C", "Cliente D", "Cliente E", "Cliente F"],
         services: ["Corte", "Coloração", "Escova", "Manicure", "Hidratação", "Barba"],
       },
       auto: {
         title: "Ordens de serviço",
-        cols: ["Aguardando", "Em serviço", "Pronto"],
-        vehicle: "Veículo",
-        services: ["Revisão", "Freios", "Alinhamento", "Troca de óleo", "Suspensão"],
+        kpis: ["Ordens em aberto", "Atrasadas", "Prontas p/ entrega"],
+        stages: ["Orçamento", "Aprovado", "Em execução", "Pronta", "Entregue"],
       },
       pharmacy: {
         title: "Estoque e lotes",
+        kpis: ["Pedidos no mês", "Lotes vencendo", "Estoque baixo"],
         head: ["Item", "Lote", "Saldo", "Status"],
         rows: ["Insumo 01", "Insumo 02", "Insumo 03", "Insumo 04"],
         status: ["Ok", "Baixo", "Ok", "Ok"],
       },
       crm: {
         title: "Funil de oportunidades",
-        stages: ["Novo", "Contato", "Proposta", "Fechado"],
+        stages: ["Novo lead", "Em conversa", "Proposta enviada", "Negociação"],
       },
     },
   },
@@ -238,7 +242,7 @@ module.exports = {
   footer: {
     privacy: "Privacidade (LGPD)",
     rights: "Todos os direitos reservados.",
-    demoNote: "Os projetos exibidos são demonstrações com dados fictícios.",
+    demoNote: "As telas exibidas usam dados fictícios.",
   },
   privacy: {
     title: "Política de privacidade",

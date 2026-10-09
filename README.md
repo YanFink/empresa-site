@@ -9,24 +9,25 @@ Os textos ficam em `content/pt.js` e `content/en.js` (o marcador `{brand}` vira 
 
 Antes de publicar, troque no `site.config.js`:
 
-- `contact.whatsapp` e `contact.email` (hoje são valores de exemplo);
+- `contact.whatsapp` (hoje é um número de teste) e `contact.email` (vazio esconde o botão de e-mail);
 - `siteUrl` (usado em canonical, hreflang e sitemap);
 - `brand.name` e `brand.legalName`.
 
 Nomes de clientes reais **não** aparecem no site. Só ative `showClientNames` depois que o cliente autorizar.
+O selo "Em produção" de cada projeto fica desligado em `inProduction`; ligue só o que for verdade.
 
 ## Comandos
 
 ```bash
 npm install
-npm run build        # gera a pasta dist/
+npm run build        # gera a pasta docs/
 npm start            # gera e serve em http://localhost:4173
 node tools/screenshots.js   # capturas em desktop/tablet/celular, PT e EN
 ```
 
 ## Publicação
 
-A pasta `dist/` é o site pronto (pode ir para GitHub Pages, Netlify, Cloudflare Pages ou qualquer hospedagem estática). Os caminhos são relativos, então funciona também em subpasta, como `usuario.github.io/empresa-site`.
+A pasta `docs/` é o site pronto (GitHub Pages publica a partir dela: Settings → Pages → Branch `main`, pasta `/docs`). Os caminhos são relativos, então funciona também em subpasta, como `usuario.github.io/empresa-site`.
 
 ## Observações
 
