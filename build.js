@@ -15,6 +15,10 @@ const DIST = path.join(ROOT, "docs"); // "docs" porque o GitHub Pages publica a 
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const jsonEsc = (s) => JSON.stringify(String(s)).slice(1, -1);
+const hexRgb = (h) => {
+  const n = parseInt(h.replace("#", ""), 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+};
 const kebab = (s) => s.replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
 function contactLabel() {
@@ -73,8 +77,11 @@ const ICONS = {
 
 /* ---------- logo tipográfica provisória ---------- */
 function logo(t) {
-  if (cfg.brand.logoFile) {
-    return `<img class="logo-img" src="ASSETS/${esc(cfg.brand.logoFile)}" alt="${esc(cfg.brand.name)}" height="28">`;
+  if (cfg.brand.logoMark) {
+    const word = cfg.brand.logoWord
+      ? `<img class="logo-wordimg" src="ASSETS/${esc(cfg.brand.logoWord)}" alt="${esc(cfg.brand.name)}" width="305" height="25">`
+      : `<span class="logo-word">${esc(cfg.brand.name.toUpperCase())}</span>`;
+    return `<img class="logo-mark" src="ASSETS/${esc(cfg.brand.logoMark)}" alt="" width="39" height="30">${word}`;
   }
   return `<span class="logo-word">${esc(cfg.brand.name.toUpperCase())}</span><span class="logo-dot" aria-hidden="true"></span>`;
 }
@@ -235,14 +242,17 @@ ${alts}
 <meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:locale" content="${t.ogLocale}">
-<meta name="twitter:card" content="summary">
-<link rel="icon" type="image/svg+xml" href="${up}assets/favicon.svg">
+<meta property="og:image" content="${cfg.siteUrl.replace(/\/$/, "")}/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+${cfg.brand.logoMark ? `<link rel="icon" type="image/png" sizes="64x64" href="${up}assets/favicon.png">\n<link rel="apple-touch-icon" href="${up}assets/apple-touch-icon.png">` : `<link rel="icon" type="image/svg+xml" href="${up}assets/favicon.svg">`}
 ${fontPre}
 <link rel="stylesheet" href="${up}assets/fonts.css">
 <link rel="stylesheet" href="${up}assets/style.css">
 <style>:root{${Object.entries(cfg.colors)
     .map(([k, v]) => `--${kebab(k)}:${v}`)
-    .join(";")};--f-display:'${cfg.fonts.display}',system-ui,sans-serif;--f-body:'${cfg.fonts.body}',system-ui,sans-serif}</style>
+    .join(";")};--accent-rgb:${hexRgb(cfg.colors.accent)};--warm-rgb:${hexRgb(cfg.colors.warm)};--bg-rgb:${hexRgb(cfg.colors.bg)};--surface-rgb:${hexRgb(cfg.colors.surface)};--border-rgb:${hexRgb(cfg.colors.border)};--f-display:'${cfg.fonts.display}',system-ui,sans-serif;--f-body:'${cfg.fonts.body}',system-ui,sans-serif}</style>
 <script type="application/ld+json">${JSON.stringify(jsonld)}</script>
 </head>`;
 }
@@ -253,7 +263,7 @@ function header(t, ctx) {
   return `<a class="skip" href="#main">${esc(t.ui.skip)}</a>
 <header class="site-header" id="top">
   <div class="wrap bar">
-    <a class="logo" href="${homeHref}" aria-label="${esc(cfg.brand.name)} — ${esc(t.ui.home)}">${logo(t).replace("ASSETS/", ctx.up + "assets/")}</a>
+    <a class="logo" href="${homeHref}" aria-label="${esc(cfg.brand.name)} — ${esc(t.ui.home)}">${logo(t).replace(/ASSETS\//g, ctx.up + "assets/")}</a>
     <nav class="nav" id="nav" aria-label="Principal">
       ${links}
       <a class="btn btn-sm nav-cta" href="${anchor("contato")}">${esc(t.cta)}</a>
@@ -439,7 +449,7 @@ function contact(t) {
 function footer(t, ctx) {
   return `<footer class="site-footer">
   <div class="wrap foot">
-    <div class="foot-brand"><a class="logo" href="${ctx.homeHref}" aria-label="${esc(cfg.brand.name)}">${logo(t).replace("ASSETS/", ctx.up + "assets/")}</a>
+    <div class="foot-brand"><a class="logo" href="${ctx.homeHref}" aria-label="${esc(cfg.brand.name)}">${logo(t).replace(/ASSETS\//g, ctx.up + "assets/")}</a>
       <p>© ${cfg.year} ${esc(cfg.brand.legalName)}. ${esc(t.footer.rights)}</p></div>
     <div class="foot-links"><a href="${ctx.privacyHref}">${esc(t.footer.privacy)}</a>
       <a href="${ctx.switchHref}" data-lang-switch="${t.lang === "pt" ? "en" : "pt"}" hreflang="${t.lang === "pt" ? "en" : "pt"}" lang="${t.lang === "pt" ? "en" : "pt"}">${esc(t.ui.switchTo)}</a></div>

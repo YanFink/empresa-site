@@ -10,11 +10,12 @@
  */
 module.exports = {
   brand: {
-    name: "Lynx",              // nome provisório (troque quando definir)
-    legalName: "Lynx",         // razão social / nome jurídico (aparece no rodapé e na privacidade)
-    // Logo provisória 100% tipográfica: o nome em caixa alta com um ponto de destaque.
-    // Para usar um logo em imagem no futuro, coloque o arquivo em assets/ e preencha logoFile.
-    logoFile: null,
+    name: "Paralaxe",
+    legalName: "Paralaxe",     // razão social / nome jurídico (aparece no rodapé e na privacidade)
+    // Logo em imagem (arquivos em assets/). Deixe null para usar só texto.
+    logoMark: "logo-mark.png",       // o "P" amarelo
+    logoWord: "logo-wordmark.png",   // o nome PARALAXE
+    tagline: "Software / Games / Technology",
   },
 
   // URL final do site, sem barra no fim. Enquanto não houver domínio próprio, usa o
@@ -42,25 +43,26 @@ module.exports = {
   // Selo de cada projeto: "ready" = Pronto para implantação, "live" = Em produção
   // (só quando estiver de fato no ar com cliente), "" = sem selo.
   projectStatus: {
-    salon: "",
-    auto: "ready",
-    pharmacy: "ready",
-    crm: "ready",
+    salon: "live",
+    auto: "live",
+    pharmacy: "live",
+    crm: "live",
   },
 
-  // Paleta provisória: grafite profundo + acento teal.
+  // Paleta da marca: preto profundo + amarelo do logo.
   colors: {
-    bg: "#090d12",
-    bgAlt: "#0d131a",
-    surface: "#121a23",
-    surface2: "#18222d",
-    border: "#243240",
-    text: "#e9eff5",
-    muted: "#9aabbb",
-    accent: "#22c7d6",
-    accentStrong: "#4fe3f0",
-    accentDeep: "#0f8b9a",
-    warm: "#f2b36b", // toque quente usado em mockups
+    bg: "#050505",
+    bgAlt: "#0a0a0b",
+    surface: "#111113",
+    surface2: "#19191c",
+    border: "#2a2a2f",
+    text: "#f4f3ee",
+    muted: "#a3a3a8",
+    accent: "#fed301",       // amarelo do logo
+    accentStrong: "#ffe55c",
+    accentDeep: "#c79e00",
+    onAccent: "#141000",     // texto sobre botões amarelos
+    warm: "#ff9a3c",         // laranja de apoio
   },
 
   // Fontes self-hosted (pacotes @fontsource). Se trocar, ajuste também build.js.
