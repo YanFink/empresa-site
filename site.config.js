@@ -20,7 +20,7 @@ module.exports = {
 
   // URL final do site, sem barra no fim. Enquanto não houver domínio próprio, usa o
   // endereço gratuito do GitHub Pages. Quando comprar o domínio, troque aqui.
-  siteUrl: "https://yanfink.github.io/paralaxe",
+  siteUrl: "https://paralaxe-studio.github.io/paralaxe",
 
   languages: ["pt", "en"],
   defaultLang: "pt",
