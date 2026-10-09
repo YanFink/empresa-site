@@ -333,7 +333,7 @@ function projects(t) {
       return `<article class="proj" data-reveal>
         <div class="proj-visual">${MOCKS[it.key](t, label)}<p class="mock-note">${esc(t.ui.mockNote)}</p></div>
         <div class="proj-copy">
-          <p class="tag">${esc(it.tag)}${cfg.inProduction && cfg.inProduction[it.key] ? ` <span class="badge badge-live">${esc(p.liveBadge)}</span>` : ""}</p>
+          <p class="tag">${esc(it.tag)}${cfg.projectStatus && cfg.projectStatus[it.key] ? ` <span class="badge badge-live">${esc(p.badges[cfg.projectStatus[it.key]])}</span>` : ""}</p>
           <h3>${esc(title)}</h3>
           <p>${esc(it.text)}</p>
           <p class="mod-title">${esc(p.modulesTitle)}</p>

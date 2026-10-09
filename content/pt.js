@@ -84,7 +84,7 @@ module.exports = {
     intro:
       "Estes são alguns sistemas que desenvolvemos. Servem para você ver como pensamos produto, e qualquer um deles pode ser adaptado ou virar algo completamente diferente.",
     disclaimer: "As telas mostram dados fictícios, criados apenas para demonstração.",
-    liveBadge: "Em produção",
+    badges: { ready: "Pronto para implantação", live: "Em produção" },
     more: {
       title: "Não viu o seu ramo?",
       text: "A lista acima é só uma amostra. Conte o que o seu negócio precisa e a gente constrói o sistema.",

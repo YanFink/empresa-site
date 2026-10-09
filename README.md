@@ -14,7 +14,7 @@ Antes de publicar, troque no `site.config.js`:
 - `brand.name` e `brand.legalName`.
 
 Nomes de clientes reais **não** aparecem no site. Só ative `showClientNames` depois que o cliente autorizar.
-O selo "Em produção" de cada projeto fica desligado em `inProduction`; ligue só o que for verdade.
+O selo de cada projeto fica em `projectStatus` ("ready" = pronto para implantação; "live" = em produção, só quando estiver no ar com cliente).
 
 ## Comandos
 

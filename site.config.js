@@ -39,13 +39,13 @@ module.exports = {
     pharmacy: "Privilégio Fórmulas",
   },
 
-  // Selo "Em produção" nos projetos. Deixe false até o sistema estar de fato no ar
-  // com um cliente que autorizou. Mude para true só nos que forem verdade.
-  inProduction: {
-    salon: false,
-    auto: false,
-    pharmacy: false,
-    crm: false,
+  // Selo de cada projeto: "ready" = Pronto para implantação, "live" = Em produção
+  // (só quando estiver de fato no ar com cliente), "" = sem selo.
+  projectStatus: {
+    salon: "",
+    auto: "ready",
+    pharmacy: "ready",
+    crm: "ready",
   },
 
   // Paleta provisória: grafite profundo + acento teal.
