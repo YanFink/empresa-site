@@ -6,7 +6,7 @@ module.exports = {
   meta: {
     title: "{brand} — Sistemas de gestão sob medida e sites",
     description:
-      "Desenvolvemos sistemas de gestão sob medida para qualquer ramo de negócio, além de sites. Licença mensal, hospedagem dedicada e preço justo. Peça um orçamento.",
+      "Desenvolvemos sistemas de gestão sob medida para qualquer ramo de negócio, além de sites e aplicativos. Licença mensal, hospedagem dedicada e preço justo. Peça um orçamento.",
     privacyTitle: "Política de privacidade — {brand}",
     privacyDescription: "Como o site da {brand} trata dados pessoais, em conformidade com a LGPD.",
   },
@@ -32,7 +32,7 @@ module.exports = {
   hero: {
     eyebrow: "Software sob medida",
     title: ["Sistemas que se encaixam no seu negócio,", "não o contrário."],
-    sub: "Criamos sistemas de gestão e sites sob medida para qualquer ramo. Mais completos que um sistema genérico, sem o preço de uma grande agência.",
+    sub: "Criamos sistemas de gestão, sites e aplicativos sob medida para qualquer ramo. Mais completos que um sistema genérico, sem o preço de uma grande agência.",
     secondary: "Ver o que construímos",
     chips: ["Sob medida", "Hospedagem dedicada", "Pensado para a LGPD"],
     floatA: "Agenda do dia",
@@ -55,6 +55,11 @@ module.exports = {
         icon: "site",
         title: "Sites",
         text: "Sites institucionais e páginas de apresentação rápidas, bonitas e fáceis de encontrar, feitos com o mesmo cuidado dos nossos sistemas.",
+      },
+      {
+        icon: "mobile",
+        title: "Aplicativos",
+        text: "Aplicativos para Android e sistemas instaláveis no celular (PWA), que funcionam também no iPhone sem passar pela loja da Apple.",
       },
       {
         icon: "game",

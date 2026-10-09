@@ -6,7 +6,7 @@ module.exports = {
   meta: {
     title: "{brand} — Custom business software and websites",
     description:
-      "We build custom management systems for any kind of business, plus websites. Monthly license, dedicated hosting and fair pricing. Request a quote.",
+      "We build custom management systems for any kind of business, plus websites and apps. Monthly license, dedicated hosting and fair pricing. Request a quote.",
     privacyTitle: "Privacy policy — {brand}",
     privacyDescription: "How the {brand} website handles personal data, in line with Brazil's LGPD.",
   },
@@ -32,7 +32,7 @@ module.exports = {
   hero: {
     eyebrow: "Custom software",
     title: ["Software that fits your business,", "not the other way around."],
-    sub: "We build custom management systems and websites for any line of business. More complete than an off-the-shelf tool, without the price of a large agency.",
+    sub: "We build custom management systems, websites and apps for any line of business. More complete than an off-the-shelf tool, without the price of a large agency.",
     secondary: "See what we build",
     chips: ["Built to fit", "Dedicated hosting", "Designed for LGPD"],
     floatA: "Today's schedule",
@@ -55,6 +55,11 @@ module.exports = {
         icon: "site",
         title: "Websites",
         text: "Company websites and landing pages that are fast, good-looking and easy to find, built with the same care as our systems.",
+      },
+      {
+        icon: "mobile",
+        title: "Apps",
+        text: "Android apps and installable mobile systems (PWA) that also work on iPhone, without going through the Apple store.",
       },
       {
         icon: "game",
