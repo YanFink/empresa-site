@@ -39,7 +39,7 @@ module.exports = {
   social: {
     instagram: "https://instagram.com/paralaxe_studio",
     tiktok: "",
-    youtube: "",
+    youtube: "https://www.youtube.com/@ParalaxeStudio",
     x: "",
     linkedin: "",
   },
