@@ -119,3 +119,12 @@ Estamos nos preparando para criar jogos para PC. 🎮
 Ainda é cedo, mas a sua opinião já conta: que tipo de jogo você gostaria de ver aqui? Responde na enquete dos Stories ✨
 
 #paralaxestudio #gamedev #jogosparapc #indiegame #emBreve
+
+########################################
+# STORY DE APRESENTACAO (postar agora)
+########################################
+
+ARQUIVO - videos/story-apresentacao.mp4 (14 segundos, formato Stories 9:16)
+Como postar: Stories > escolha o video > adicione o adesivo "Link" com https://paralaxestudio.com.br (ou so mencione @paralaxe_studio) > publique.
+Depois, se quiser, fixe nos Destaques com o nome "Quem somos".
+Texto opcional por cima (sem emoji): "Prazer! Segue a gente."
