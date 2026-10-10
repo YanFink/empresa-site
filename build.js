@@ -447,12 +447,19 @@ function contact(t) {
 </section>`;
 }
 
+const SOCIAL_LABELS = { instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", x: "X", linkedin: "LinkedIn" };
+function socialEntries() {
+  const soc = cfg.social || {};
+  return Object.keys(SOCIAL_LABELS).filter((k) => soc[k]).map((k) => ({ label: SOCIAL_LABELS[k], url: soc[k] }));
+}
+
 function footer(t, ctx) {
+  const socials = socialEntries().map((s) => `<a href="${esc(s.url)}" target="_blank" rel="noopener me">${esc(s.label)}</a>`).join("\n      ");
   return `<footer class="site-footer">
   <div class="wrap foot">
     <div class="foot-brand"><a class="logo" href="${ctx.homeHref}" aria-label="${esc(cfg.brand.name)}">${logo(t).replace(/ASSETS\//g, ctx.up + "assets/")}</a>
       <p>© ${cfg.year} ${esc(cfg.brand.legalName)}. ${esc(t.footer.rights)}</p></div>
-    <div class="foot-links"><a href="${ctx.privacyHref}">${esc(t.footer.privacy)}</a>
+    <div class="foot-links">${socials ? "\n      " + socials + "\n      " : ""}<a href="${ctx.privacyHref}">${esc(t.footer.privacy)}</a>
       <a href="${ctx.switchHref}" data-lang-switch="${t.lang === "pt" ? "en" : "pt"}" hreflang="${t.lang === "pt" ? "en" : "pt"}" lang="${t.lang === "pt" ? "en" : "pt"}">${esc(t.ui.switchTo)}</a></div>
     <p class="foot-note">${esc(t.footer.demoNote)}</p>
   </div>
@@ -490,7 +497,7 @@ function buildPage(lang, page) {
   const jsonld = {
     "@context": "https://schema.org",
     "@graph": [
-      { "@type": "Organization", name: cfg.brand.name, url: cfg.siteUrl },
+      { "@type": "Organization", name: cfg.brand.name, url: cfg.siteUrl, ...(socialEntries().length ? { sameAs: socialEntries().map((s) => s.url) } : {}) },
       { "@type": "WebSite", name: cfg.brand.name, url: cfg.siteUrl, inLanguage: t.htmlLang },
     ],
   };

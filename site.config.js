@@ -35,6 +35,15 @@ module.exports = {
     email: "contato@paralaxestudio.com",
   },
 
+  // Redes sociais (URL completa). Deixe "" para não mostrar a rede no rodapé.
+  social: {
+    instagram: "https://instagram.com/paralaxe_studio",
+    tiktok: "",
+    youtube: "",
+    x: "",
+    linkedin: "",
+  },
+
   // Nomes de clientes reais NÃO aparecem no site por padrão.
   // Só mude para true depois que o cliente autorizar, e preencha os nomes.
   showClientNames: false,
