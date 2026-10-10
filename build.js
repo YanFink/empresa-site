@@ -507,7 +507,7 @@ function buildPage(lang, page) {
         <a class="back" href="../">${ICONS.arrow}<span>${esc(t.ui.backHome)}</span></a>
         <h1>${esc(t.privacy.title)}</h1>
         <p class="legal-meta">${esc(t.privacy.updated)}</p>
-        <p class="draft">${esc(t.privacy.draftNote)}</p>
+        ${t.privacy.draftNote ? `<p class="draft">${esc(t.privacy.draftNote)}</p>` : ""}
         ${t.privacy.sections
           .map((s) => `<section><h2>${esc(s.h)}</h2>${s.p.map((x) => `<p>${esc(x)}</p>`).join("")}</section>`)
           .join("")}

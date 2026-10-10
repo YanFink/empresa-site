@@ -252,8 +252,8 @@ module.exports = {
   privacy: {
     title: "Privacy policy",
     updated: "Last updated: October 2026",
-    draftNote:
-      "Provisional base text. Have a lawyer review it and complete the controller details before publishing it as final.",
+    // Aviso de texto provisório (deixe "" para não exibir).
+    draftNote: "",
     sections: [
       {
         h: "Who we are",
