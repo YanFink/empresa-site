@@ -621,6 +621,7 @@ function main() {
   );
   write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`);
   write(".nojekyll", "");
+  if (cfg.customDomain) write("CNAME", cfg.customDomain + "\n");
   console.log("Site gerado em docs/");
 }
 

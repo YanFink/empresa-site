@@ -20,7 +20,10 @@ module.exports = {
 
   // URL final do site, sem barra no fim. Enquanto não houver domínio próprio, usa o
   // endereço gratuito do GitHub Pages. Quando comprar o domínio, troque aqui.
-  siteUrl: "https://paralaxe-studio.github.io/paralaxe",
+  siteUrl: "https://paralaxestudio.com.br",
+
+  // Domínio próprio publicado pelo GitHub Pages (gera o arquivo docs/CNAME). Deixe "" para não usar.
+  customDomain: "paralaxestudio.com.br",
 
   languages: ["pt", "en"],
   defaultLang: "pt",
