@@ -228,7 +228,7 @@ module.exports = {
     eyebrow: "Jogos",
     id: "jogos",
     badge: "Em breve",
-    title: "Também vamos fazer jogos.",
+    title: "Jogos para PC estão a caminho.",
     text: "Estamos nos preparando para criar jogos para PC e lançá-los na Steam. Ainda é cedo: não há título, nem data, e preferimos contar mais quando houver algo de verdade para mostrar.",
     teaser: "Carregando…",
     teaserAlt: "Ilustração abstrata de uma tela de jogo em preparação, com blocos animados",
